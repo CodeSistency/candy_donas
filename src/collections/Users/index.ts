@@ -2,28 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { adminsOnly, anyone, selfOrStaffForField, staffOnly } from '@/access/roleBasedAuth';
 
-// export const Users: CollectionConfig = {
-//   slug: 'users',
-//   access: {
-//     admin: authenticated,
-//     create: authenticated,
-//     delete: authenticated,
-//     read: authenticated,
-//     update: authenticated,
-//   },
-//   admin: {
-//     defaultColumns: ['name', 'email'],
-//     useAsTitle: 'name',
-//   },
-//   auth: true,
-//   fields: [
-//     {
-//       name: 'name',
-//       type: 'text',
-//     },
-//   ],
-//   timestamps: true,
-// }
+
 export const Users: CollectionConfig = {
   slug: 'users',
   auth: true, // Adds email and password fields automatically

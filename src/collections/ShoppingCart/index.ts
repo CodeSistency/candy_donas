@@ -27,7 +27,7 @@ export const ShoppingCart: CollectionConfig = {
       beforeChange: [
         ({ req, operation, data }) => {
           if (operation === 'create') {
-            data.user = req.user.id; // Ensure user is set to current user
+            data.user = req.user?.id; // Ensure user is set to current user
           }
           return data;
         },

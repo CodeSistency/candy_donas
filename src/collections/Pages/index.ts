@@ -1,6 +1,5 @@
 import type { CollectionConfig } from 'payload'
 
-import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Archive } from '../../blocks/ArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
@@ -20,6 +19,7 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
+import { authenticated } from '@/access/roleBasedAuth'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',

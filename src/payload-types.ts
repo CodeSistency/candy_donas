@@ -71,6 +71,11 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    products: Product;
+    orders: Order;
+    reviews: Review;
+    promotions: Promotion;
+    'shopping-carts': ShoppingCart;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -87,6 +92,11 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
+    promotions: PromotionsSelect<false> | PromotionsSelect<true>;
+    'shopping-carts': ShoppingCartsSelect<false> | ShoppingCartsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -351,9 +361,13 @@ export interface Media {
  */
 export interface Category {
   id: string;
-  title: string;
+  name: string;
   slug?: string | null;
-  slugLock?: boolean | null;
+  description?: string | null;
+  image?: (string | null) | Media;
+  parentCategory?: (string | null) | Category;
+  categoryOrder?: number | null;
+  isVisibleInNavigation?: boolean | null;
   parent?: (string | null) | Category;
   breadcrumbs?:
     | {
@@ -372,7 +386,25 @@ export interface Category {
  */
 export interface User {
   id: string;
-  name?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  role?: ('customer' | 'employee' | 'admin') | null;
+  addresses?:
+    | {
+        addressType?: ('shipping' | 'billing' | 'other') | null;
+        streetAddress?: string | null;
+        city?: string | null;
+        state?: string | null;
+        zipCode?: string | null;
+        country?: string | null;
+        isDefaultShipping?: boolean | null;
+        isDefaultBilling?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  phoneNumber?: string | null;
+  isMarketingOptIn?: boolean | null;
+  loyaltyPoints?: number | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -727,6 +759,172 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: string;
+  name: string;
+  slug?: string | null;
+  productCode?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  images?: (string | Media)[] | null;
+  price: number;
+  categories?: (string | Category)[] | null;
+  tags?: string | null;
+  variants?:
+    | {
+        variantName: string;
+        sku?: string | null;
+        priceModifier?: number | null;
+        variantImages?: (string | Media)[] | null;
+        variantInventory?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  inventory?: number | null;
+  featured?: boolean | null;
+  meta?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    metaKeywords?: string | null;
+  };
+  nutritionalInfo?: {
+    calories?: number | null;
+    fat?: number | null;
+  };
+  allergens?: string | null;
+  isPublished?: boolean | null;
+  unit?: ('piece' | 'box' | 'dozen') | null;
+  purchaseNote?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: string;
+  customer: string | User;
+  items?:
+    | {
+        product: string | Product;
+        quantity: number;
+        price: number;
+        variantName?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  total: number;
+  shippingAddress?: {
+    streetAddress?: string | null;
+    city?: string | null;
+    state?: string | null;
+    zipCode?: string | null;
+    country?: string | null;
+  };
+  billingAddress?: {
+    streetAddress?: string | null;
+    city?: string | null;
+    state?: string | null;
+    zipCode?: string | null;
+    country?: string | null;
+  };
+  paymentMethod?: string | null;
+  orderStatus?: ('pending' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'refunded') | null;
+  trackingNumber?: string | null;
+  orderDate?: string | null;
+  orderNumber?: string | null;
+  shippingCost?: number | null;
+  discountAmount?: number | null;
+  discountCode?: string | null;
+  paymentStatus?: ('pending' | 'paid' | 'failed' | 'refunded') | null;
+  shippingMethod?: string | null;
+  estimatedDeliveryDate?: string | null;
+  customerNotes?: string | null;
+  isGift?: boolean | null;
+  giftMessage?: string | null;
+  giftWrapOption?: ('none' | 'standard' | 'premium') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: string;
+  product: string | Product;
+  user: string | User;
+  rating: number;
+  comment?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "promotions".
+ */
+export interface Promotion {
+  id: string;
+  code: string;
+  discountType: 'percentage' | 'fixed';
+  discountValue: number;
+  startDate?: string | null;
+  endDate?: string | null;
+  applicableProducts?: (string | Product)[] | null;
+  applicableCategories?: (string | Category)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shopping-carts".
+ */
+export interface ShoppingCart {
+  id: string;
+  user: string | User;
+  items?:
+    | {
+        product?: (string | null) | Product;
+        quantity?: number | null;
+        variant?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -916,6 +1114,26 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: string | User;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: string | Product;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: string | Order;
+      } | null)
+    | ({
+        relationTo: 'reviews';
+        value: string | Review;
+      } | null)
+    | ({
+        relationTo: 'promotions';
+        value: string | Promotion;
+      } | null)
+    | ({
+        relationTo: 'shopping-carts';
+        value: string | ShoppingCart;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1243,9 +1461,13 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
-  title?: T;
+  name?: T;
   slug?: T;
-  slugLock?: T;
+  description?: T;
+  image?: T;
+  parentCategory?: T;
+  categoryOrder?: T;
+  isVisibleInNavigation?: T;
   parent?: T;
   breadcrumbs?:
     | T
@@ -1263,7 +1485,25 @@ export interface CategoriesSelect<T extends boolean = true> {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
-  name?: T;
+  firstName?: T;
+  lastName?: T;
+  role?: T;
+  addresses?:
+    | T
+    | {
+        addressType?: T;
+        streetAddress?: T;
+        city?: T;
+        state?: T;
+        zipCode?: T;
+        country?: T;
+        isDefaultShipping?: T;
+        isDefaultBilling?: T;
+        id?: T;
+      };
+  phoneNumber?: T;
+  isMarketingOptIn?: T;
+  loyaltyPoints?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1273,6 +1513,147 @@ export interface UsersSelect<T extends boolean = true> {
   hash?: T;
   loginAttempts?: T;
   lockUntil?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  productCode?: T;
+  description?: T;
+  images?: T;
+  price?: T;
+  categories?: T;
+  tags?: T;
+  variants?:
+    | T
+    | {
+        variantName?: T;
+        sku?: T;
+        priceModifier?: T;
+        variantImages?: T;
+        variantInventory?: T;
+        id?: T;
+      };
+  inventory?: T;
+  featured?: T;
+  meta?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        metaKeywords?: T;
+      };
+  nutritionalInfo?:
+    | T
+    | {
+        calories?: T;
+        fat?: T;
+      };
+  allergens?: T;
+  isPublished?: T;
+  unit?: T;
+  purchaseNote?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  customer?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        quantity?: T;
+        price?: T;
+        variantName?: T;
+        id?: T;
+      };
+  total?: T;
+  shippingAddress?:
+    | T
+    | {
+        streetAddress?: T;
+        city?: T;
+        state?: T;
+        zipCode?: T;
+        country?: T;
+      };
+  billingAddress?:
+    | T
+    | {
+        streetAddress?: T;
+        city?: T;
+        state?: T;
+        zipCode?: T;
+        country?: T;
+      };
+  paymentMethod?: T;
+  orderStatus?: T;
+  trackingNumber?: T;
+  orderDate?: T;
+  orderNumber?: T;
+  shippingCost?: T;
+  discountAmount?: T;
+  discountCode?: T;
+  paymentStatus?: T;
+  shippingMethod?: T;
+  estimatedDeliveryDate?: T;
+  customerNotes?: T;
+  isGift?: T;
+  giftMessage?: T;
+  giftWrapOption?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
+export interface ReviewsSelect<T extends boolean = true> {
+  product?: T;
+  user?: T;
+  rating?: T;
+  comment?: T;
+  createdAt?: T;
+  updatedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "promotions_select".
+ */
+export interface PromotionsSelect<T extends boolean = true> {
+  code?: T;
+  discountType?: T;
+  discountValue?: T;
+  startDate?: T;
+  endDate?: T;
+  applicableProducts?: T;
+  applicableCategories?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shopping-carts_select".
+ */
+export interface ShoppingCartsSelect<T extends boolean = true> {
+  user?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        quantity?: T;
+        variant?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
